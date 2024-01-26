@@ -66,17 +66,17 @@ class Property:
 class Query:
     @strawberry.field
     async def propertySearchInRange(
-        pos: "GeoPoint",
+        pos: GeoPoint,
         range: float = 1,
         rangeUnit: RangeUnit = "km",
         perPage: int = 100,
         page: int = 1,
-    ) -> typing.List[Timeline]:
+    ) -> typing.List[Property]:
         return []
 
     @strawberry.field
     async def incidentSearchInRange(
-        pos: "GeoPoint",
+        pos: GeoPoint,
         range: float = 1,
         rangeUnit: RangeUnit = "km",
         perPage: int = 100,
@@ -86,7 +86,7 @@ class Query:
 
     @strawberry.field
     async def markerSearchInRange(
-        pos: "GeoPoint",
+        pos: GeoPoint,
         range: float = 1,
         rangeUnit: RangeUnit = "km",
         perPage: int = 100,
@@ -105,29 +105,29 @@ class Query:
     @strawberry.field
     async def propertySearch(
         postcodePattern: str,
-        dateFrom: str,
-        dateTo: str,
+        dateFrom: typing.Optional[str] = None,
+        dateTo: typing.Optional[str] = None,
         perPage: int = 100,
         page: int = 1
-    ) -> typing.List[Timeline]:
+    ) -> typing.List[Property]:
         return []
 
     @strawberry.field
     async def transactionSearch(
         postcodePattern: str,
-        dateFrom: str,
-        dateTo: str,
+        dateFrom: typing.Optional[str] = None,
+        dateTo: typing.Optional[str] = None,
         perPage: int = 100,
         page: int = 1
-    ) -> typing.List[Timeline]:
+    ) -> typing.List[Transaction]:
         return []
 
     @strawberry.field
     async def timelineSearch(
         postcodePattern: str,
         postcodes: typing.List[str],
-        dateFrom: str,
-        dateTo: str,
+        dateFrom: typing.Optional[str] = None,
+        dateTo: typing.Optional[str] = None,
         perPage: int = 100,
         page: int = 1
     ) -> typing.List[Timeline]:
@@ -147,7 +147,7 @@ app = FastAPI()
 
 @app.get("/")
 def index():
-    return {"message": "asd"}
+    return {"message": "index"}
 
 app.add_route("/graphql", GraphQL(schema, debug=True))
 
