@@ -88,7 +88,15 @@ class Query:
         perPage: int = 100,
         page: int = 1,
     ) -> typing.List[Postcode]:
-        return []
+        offset = (page - 1) * perPage
+        query = (
+            ORM.Postcode.select()
+                .where(ORM.Postcode.postcode.contains(pattern))
+                .limit(perPage)
+                .offset(offset)
+        )
+
+        return query.execute()
 
     @strawberry.field
     async def propertySearch(
@@ -108,7 +116,28 @@ class Query:
         perPage: int = 100,
         page: int = 1
     ) -> typing.List[Transaction]:
-        return []
+        offset = (page - 1) * perPage
+        
+        query = (
+            ORM.Transaction.select()
+                .where(ORM.Transaction.guid.contains(postcodePattern))
+                .limit(perPage)
+                .offset(offset)
+        )
+
+        if dateFrom:
+            query = (
+                query
+                    .where(ORM.Transaction.date.__ge__(dateFrom))
+            )
+
+        if dateTo:
+            query = (
+                query
+                    .where(ORM.Transaction.date.__le__(dateTo))
+            )
+
+        return query.execute()
 
     @strawberry.field
     async def timelineSearch(
@@ -129,31 +158,25 @@ class Query:
         if postcodePattern:
             query = (
                 query
-                    .orwhere(ORM.Timeline.postcode.contains(postcodePattern))
+                    .where(ORM.Timeline.postcode.contains(postcodePattern))
             )
 
         if postcodes:
             query = (
                 query
-                    .orwhere(ORM.Timeline.postcode.in_(postcodes))
+                    .where(ORM.Timeline.postcode.in_(postcodes))
             )
 
-        if dateFrom and dateTo:
+        if dateFrom:
             query = (
                 query
-                    .orwhere(ORM.Timeline.date.between(lo = dateFrom, hi = dateTo))
+                    .where(ORM.Timeline.date.__ge__(dateFrom))
             )
 
-        if dateFrom and not dateTo:
+        if dateTo:
             query = (
                 query
-                    .orwhere(ORM.Timeline.date.__ge__(dateFrom))
-            )
-
-        if dateTo and not dateFrom:
-            query = (
-                query
-                    .orwhere(ORM.Timeline.date.__le__(dateTo))
+                    .where(ORM.Timeline.date.__le__(dateTo))
             )
 
         return query.execute()
@@ -169,7 +192,6 @@ class Query:
         return (
             ORM.Area.select()
                 .where(ORM.Area.area.contains(postcodePattern))
-                .orwhere(ORM.Area.city.contains(postcodePattern))
                 .limit(perPage)
                 .offset(offset)
                 .execute()
