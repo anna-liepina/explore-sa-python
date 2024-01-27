@@ -101,12 +101,18 @@ class Query:
     @strawberry.field
     async def propertySearch(
         postcodePattern: str,
-        dateFrom: typing.Optional[str] = None,
-        dateTo: typing.Optional[str] = None,
         perPage: int = 100,
         page: int = 1
     ) -> typing.List[Property]:
-        return []
+        offset = (page - 1) * perPage
+        query = (
+            ORM.Property.select()
+                .where(ORM.Property.postcode.contains(postcodePattern))
+                .limit(perPage)
+                .offset(offset)
+        )
+
+        return query.execute()
 
     @strawberry.field
     async def transactionSearch(
