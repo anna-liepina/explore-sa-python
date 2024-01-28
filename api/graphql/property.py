@@ -3,28 +3,37 @@ import strawberry
 from strawberry.dataloader import DataLoader
 from .transaction import Transaction
 from .postcode import Postcode
-from ..orm import Property as PropertyORM, Postcode as PostcodeORM
+from ..orm import Property as PropertyORM, Postcode as PostcodeORM, Transaction as TransactionORM
 
-# Now, you need to define a function to load the postcode data based on keys
-async def batch_load_postcodes(keys: typing.List[str]) -> typing.List[Postcode]:
-    print('keys', keys)
-    # Assuming PostcodeORM has a method to fetch multiple postcodes by a list of keys
-    postcode_records = (
+async def batchPostcodeLoad(keys: typing.List[str]) -> typing.List[Postcode]:
+    postcodes = (
         PostcodeORM
             .select()
             .where(PostcodeORM.postcode.in_(keys))
             .execute()
     )
 
-    print('postcode_records', postcode_records);
-    print('dicts', postcode_records.__dict__)
-    # Convert database records to Postcode objects
-    postcode_data = [Postcode(**record.__dict__) for record in postcode_records]
+    return [Postcode(**postcode.__data__) for postcode in postcodes]
 
-    # Return the postcode data in the same order as keys
-    return postcode_data
+async def batchTransactionLoad(keys: typing.List[str]) -> typing.List[typing.List[Transaction]]:
+    transactions = (
+        TransactionORM
+            .select()
+            .where(TransactionORM.guid.in_(keys))
+            .execute()
+    )
+    
+    cache = {}
+    for t in transactions:
+        key = t.guid;
+        cache[key] = cache.get(key, [])
+        fields = { field: getattr(t, field) for field in Transaction.__annotations__.keys() }
+        cache[key].append(Transaction(**fields))
+        
+    return [cache.get(key, None) for key in keys]
 
-postcode_loader = DataLoader(load_fn=batch_load_postcodes)
+postcodeLoader = DataLoader(load_fn=batchPostcodeLoad)
+transactionLoader = DataLoader(load_fn=batchTransactionLoad)
 
 @strawberry.type
 class Property:
@@ -43,14 +52,8 @@ class Property:
     @strawberry.field
     @staticmethod
     async def postcode(parent: strawberry.Parent[PropertyORM]) -> Postcode:
-        postcode_data = await postcode_loader.load(parent.postcode)
-        return postcode_data
+        return await postcodeLoader.load(parent.postcode)
     @strawberry.field
     @staticmethod
     async def transactions(parent: strawberry.Parent[PropertyORM]) -> typing.List[Transaction]:
-        return (
-            [
-                Transaction(date='01-01-2024', price=10000)
-            ]
-        )
-        
+        return await transactionLoader.load(parent.guid)
