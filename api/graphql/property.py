@@ -25,7 +25,7 @@ async def batchTransactionLoad(keys: typing.List[str]) -> typing.List[typing.Lis
     
     cache = {}
     for t in transactions:
-        key = t.guid;
+        key = t.guid
         cache[key] = cache.get(key, [])
         fields = { field: getattr(t, field) for field in Transaction.__annotations__.keys() }
         cache[key].append(Transaction(**fields))
@@ -37,6 +37,18 @@ transactionLoader = DataLoader(load_fn=batchTransactionLoad)
 
 @strawberry.type
 class Property:
+    # Property Type. D = Detached, S = Semi-Detached, T = Terraced, F = Flats/Maisonettes, O = Other
+    propertyType: str
+    # Duration	Relates to the tenure: F = Freehold, L= Leasehold etc.
+    # Note that HM Land Registry does not record leases of 7 years or less in the Price Paid Dataset.
+    propertyForm: str
+    # PAON [Primary Addressable Object Name]. Typically the house number or name.
+    paon: typing.Optional[str]
+    # SAON [Secondary Addressable Object Name]. Where a property has been divided into separate units (for example, flats)
+    # PAON (above) will identify the building and a SAON will be specified that identifies the separate unit/flat.
+    saon:  typing.Optional[str]
+    street:  typing.Optional[str]
+    city: typing.Optional[str]
     @strawberry.field
     @staticmethod
     async def type(parent: strawberry.Parent[PropertyORM]) -> str:
