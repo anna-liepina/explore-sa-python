@@ -3,7 +3,7 @@ version: 2
 jobs:
   pytest:
     docker:
-      - image: cimg/python
+      - image: cimg/python:3.12
       - image: cimg/mysql:8.0
         environment:
           MYSQL_DATABASE: explore_test
