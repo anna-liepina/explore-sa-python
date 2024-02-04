@@ -1,6 +1,0 @@
-peewee
-pymysql
-fastapi
-strawberry-graphql
-load_dotenv
-uvicorn

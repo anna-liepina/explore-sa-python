@@ -11,14 +11,14 @@ jobs:
 
     steps:
       - checkout
-      # - restore_cache:
-      #     keys:
-      #       - pytest-{{ checksum "requirements.txt }}
-      # - run: pip install -r requirements.txt
-      # - save_cache:
-      #     key: pytest-{{ checksum "requirements.txt }}
-      #     paths:
-      #       - ~/__pycache__
+      - restore_cache:
+          keys:
+            - poetry-{{ checksum "poetry.lock" }}
+      - run: poetry install --no-root
+      - save_cache:
+          key: poetry-{{ checksum "poetry.lock" }}
+          paths:
+            - ~/.cache
       - run:
           name: compile python
           command: python -m compileall -q .
