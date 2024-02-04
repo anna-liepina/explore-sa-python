@@ -1,0 +1,48 @@
+version: 2
+
+jobs:
+  pytest:
+    docker:
+      - image: cimg/python:3.12
+      - image: cimg/mysql:8.0
+        environment:
+          MYSQL_DATABASE: explore_test
+          MYSQL_ROOT_PASSWORD: password
+
+    steps:
+      - checkout
+      # - restore_cache:
+      #     keys:
+      #       - pytest-{{ checksum "requirements.txt }}
+      # - run: pip install -r requirements.txt
+      # - save_cache:
+      #     key: pytest-{{ checksum "requirements.txt }}
+      #     paths:
+      #       - ~/__pycache__
+      - run:
+          name: compile python
+          command: python -m compileall -q .
+      - run:
+          name: waiting for MySQL to be ready
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z 127.0.0.1 3306 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for MySQL && exit 1
+      # - run:
+      #     name: execute 'jest' tests with coverage
+      #     command: npm test -- --coverage
+      # - run:
+      #     name: upload coverage to codecov.io
+      #     command: sudo npm i -g codecov && codecov
+      # - store_artifacts:
+      #     path: coverage
+
+workflows:
+  version: 2
+  full-coverage:
+    jobs:
+      - pytest
