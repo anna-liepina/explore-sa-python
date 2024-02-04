@@ -13,10 +13,10 @@ jobs:
       - checkout
       # - restore_cache:
       #     keys:
-      #       - pytest-{{ checksum "requirements.txt }}
-      # - run: pip install -r requirements.txt
+      #       - pytest-{{ checksum "poetry.lock" }}
+      - run: poetry install --no-root
       # - save_cache:
-      #     key: pytest-{{ checksum "requirements.txt }}
+      #     key: pytest-{{ checksum "poetry.lock" }}
       #     paths:
       #       - ~/__pycache__
       - run:
