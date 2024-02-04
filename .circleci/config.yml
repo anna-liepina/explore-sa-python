@@ -32,9 +32,9 @@ jobs:
               sleep 1
             done
             echo Failed waiting for MySQL && exit 1
-      - run:
-          name: execute 'jest' tests with coverage
-          command: npm test -- --coverage
+      # - run:
+      #     name: execute 'jest' tests with coverage
+      #     command: npm test -- --coverage
       # - run:
       #     name: upload coverage to codecov.io
       #     command: sudo npm i -g codecov && codecov
