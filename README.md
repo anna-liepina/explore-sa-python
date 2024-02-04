@@ -103,6 +103,8 @@ complex automated QA, anonymized data seeding for QA purposes, and some limits o
 
 | variable            | default value | used as   | purpose
 | ---                 | ---           | ---       | ---
+| PORT                | 8081          | number    | port on which application will be made available
+| ***                 | ***           | ***       | 
 | DB_HOSTNAME         | 127.0.0.1     | string    | host on which database can be reached
 | DB_USERNAME         | root          | string    | database user
 | DB_PASSWORD         | password      | string    | database user's password
@@ -113,7 +115,6 @@ complex automated QA, anonymized data seeding for QA purposes, and some limits o
 | DB_REPLICA_USERNAME | root          | string    | database replica's user for read-only
 | DB_REPLICA_PASSWORD | password      | string    | database replica's user's password for read-only -->
 <!--
-| PORT                | 8081          | number    | port on which application will be made available
 | SSL_KEY             |               | string    | absolute path to the SSL key, example: `/home/ubuntu/private.key`
 | SSL_CERT            |               | string    | absolute path to the SSL certificate, example: `/home/ubuntu/certificate.crt`
 | ***                 | ***           | ***       | if replica's config specified then non-replica connections are used only writes -->
