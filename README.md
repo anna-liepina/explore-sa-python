@@ -75,15 +75,15 @@ complex automated QA, anonymized data seeding for QA purposes, and some limits o
 * to get database schema up to date: `$ npm run sql db:migrate`, you can also create a database via ORM `npm run sql db:create`
 * to seed the database with 'test' data: `$ npm run sql db:seed:all` -->
 
-### how to run in 'development' mode - WIP
+### how to run in 'development' mode
 
 * `uvicorn main:app --reload`
 <!-- * `$ make` or `$ npm start` -->
 
-### how to run in 'production' mode - WIP
+### how to run in 'production' mode
 
-* `python main.py`
-* `gunicorn -b 127.0.0.1:8080 -k uvicorn.workers.UvicornWorker --worker-tmp-dir /dev/shm --log-level debug main:app`
+* `gunicorn --worker-class uvicorn.workers.UvicornWorker main:app`
+  * to run on different port example: `PORT=18080 gunicorn --worker-class uvicorn.workers.UvicornWorker main:app`
 <!-- * `$ make serve`, there is no *npm* equivalent
 * if you __only__ need to generate static assets
   * `$ make build` or `$ npm run build` - generated assets will be located in __./build__ directory -->
@@ -103,6 +103,8 @@ complex automated QA, anonymized data seeding for QA purposes, and some limits o
 
 | variable            | default value | used as   | purpose
 | ---                 | ---           | ---       | ---
+| PORT                | 8081          | number    | port on which application will be made available
+| ***                 | ***           | ***       | 
 | DB_HOSTNAME         | 127.0.0.1     | string    | host on which database can be reached
 | DB_USERNAME         | root          | string    | database user
 | DB_PASSWORD         | password      | string    | database user's password
@@ -113,7 +115,6 @@ complex automated QA, anonymized data seeding for QA purposes, and some limits o
 | DB_REPLICA_USERNAME | root          | string    | database replica's user for read-only
 | DB_REPLICA_PASSWORD | password      | string    | database replica's user's password for read-only -->
 <!--
-| PORT                | 8081          | number    | port on which application will be made available
 | SSL_KEY             |               | string    | absolute path to the SSL key, example: `/home/ubuntu/private.key`
 | SSL_CERT            |               | string    | absolute path to the SSL certificate, example: `/home/ubuntu/certificate.crt`
 | ***                 | ***           | ***       | if replica's config specified then non-replica connections are used only writes -->
