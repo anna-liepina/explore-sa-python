@@ -83,7 +83,7 @@ complex automated QA, anonymized data seeding for QA purposes, and some limits o
 ### how to run in 'production' mode
 
 * `gunicorn --worker-class uvicorn.workers.UvicornWorker main:app`
-  * to run on differnt port example: `PORT=8080 gunicorn --worker-class uvicorn.workers.UvicornWorker main:app`
+  * to run on different port example: `PORT=18080 gunicorn --worker-class uvicorn.workers.UvicornWorker main:app`
 <!-- * `$ make serve`, there is no *npm* equivalent
 * if you __only__ need to generate static assets
   * `$ make build` or `$ npm run build` - generated assets will be located in __./build__ directory -->
